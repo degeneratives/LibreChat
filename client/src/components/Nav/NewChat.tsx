@@ -53,22 +53,29 @@ export default function NewChat({
   return (
     <>
       <div className="flex items-center justify-between py-[2px] md:py-2">
-        <TooltipAnchor
-          description={localize('com_nav_close_sidebar')}
-          render={
-            <Button
-              size="icon"
-              variant="outline"
-              data-testid="close-sidebar-button"
-              aria-label={localize('com_nav_close_sidebar')}
-              className="rounded-full border-none bg-transparent p-2 hover:bg-surface-hover md:rounded-xl"
-              onClick={toggleNav}
-            >
-              <Sidebar className="max-md:hidden" />
-              <MobileSidebar className="m-1 inline-flex size-10 items-center justify-center md:hidden" />
-            </Button>
-          }
-        />
+        <div className="flex items-center gap-2">
+          <img 
+            src="/assets/logo.svg" 
+            alt="Logo" 
+            className="h-8 w-8 flex-shrink-0"
+          />
+          <TooltipAnchor
+            description={localize('com_nav_close_sidebar')}
+            render={
+              <Button
+                size="icon"
+                variant="outline"
+                data-testid="close-sidebar-button"
+                aria-label={localize('com_nav_close_sidebar')}
+                className="rounded-full border-none bg-transparent p-2 hover:bg-surface-hover md:rounded-xl"
+                onClick={toggleNav}
+              >
+                <Sidebar className="max-md:hidden" />
+                <MobileSidebar className="m-1 inline-flex size-10 items-center justify-center md:hidden" />
+              </Button>
+            }
+          />
+        </div>
         <div className="flex">
           {headerButtons}
           <TooltipAnchor

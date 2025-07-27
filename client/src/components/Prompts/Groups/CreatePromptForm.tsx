@@ -133,7 +133,7 @@ const CreatePromptForm = ({
         <div className="flex w-full flex-col gap-4 md:mt-[1.075rem]">
           <div>
             <h2 className="flex items-center justify-between rounded-t-lg border border-border-medium py-2 pl-4 pr-1 text-base font-semibold dark:text-gray-200">
-              <span>{localize('com_ui_prompt_text')}*</span>
+              <span>{localize('com_ui_prompt_text')}</span>
               <VariablesDropdown fieldName="prompt" className="mr-2" />
             </h2>
             <div className="min-h-32 rounded-b-lg border border-border-medium p-4 transition-all duration-150">

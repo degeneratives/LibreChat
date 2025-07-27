@@ -1,15 +1,18 @@
 import { useState, memo } from 'react';
 import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
-import { FileText, LogOut } from 'lucide-react';
+import { FileText, LogOut, CreditCard, Settings as SettingsIcon } from 'lucide-react';
 import { LinkIcon, GearIcon, DropdownMenuSeparator } from '~/components';
 import { useGetStartupConfig, useGetUserBalance } from '~/data-provider';
+import { useGetSubscriptionStatus } from '~/data-provider/subscription';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
 import { useAuthContext } from '~/hooks/AuthContext';
 import useAvatar from '~/hooks/Messages/useAvatar';
 import { UserIcon } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 import Settings from './Settings';
+import SubscriptionDialog from './SubscriptionDialog';
+import SubscriptionSettings from './SubscriptionSettings';
 import store from '~/store';
 
 function AccountSettings() {
@@ -19,8 +22,11 @@ function AccountSettings() {
   const balanceQuery = useGetUserBalance({
     enabled: !!isAuthenticated && startupConfig?.balance?.enabled,
   });
+  const { data: subscriptionStatus } = useGetSubscriptionStatus();
   const [showSettings, setShowSettings] = useState(false);
   const [showFiles, setShowFiles] = useRecoilState(store.showFiles);
+  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
+  const [showSubscriptionSettings, setShowSubscriptionSettings] = useState(false);
 
   const avatarSrc = useAvatar(user);
   const avatarSeed = user?.avatar || user?.name || user?.username || '';
@@ -84,6 +90,38 @@ function AccountSettings() {
             <DropdownMenuSeparator />
           </>
         )}
+        {/* Subscription Status */}
+        <div className="text-[#1A1A5D] ml-3 mr-2 py-2 text-sm font-nunito" role="note">
+          Subscription:{' '}
+          {subscriptionStatus?.isActive ? (
+            <span className="text-brand-green-600 font-medium">
+              Active ({subscriptionStatus.type?.toUpperCase()})
+            </span>
+          ) : (
+            <span className="text-gray-500">Inactive</span>
+          )}
+        </div>
+        <DropdownMenuSeparator />
+        {/* Subscription Menu Items */}
+        {!subscriptionStatus?.isActive ? (
+          <Select.SelectItem
+            value=""
+            onClick={() => setShowSubscriptionDialog(true)}
+            className="select-item text-sm text-[#1A1A5D] font-nunito"
+          >
+            <CreditCard className="icon-md" aria-hidden="true" />
+            Subscribe to Premium
+          </Select.SelectItem>
+        ) : (
+          <Select.SelectItem
+            value=""
+            onClick={() => setShowSubscriptionSettings(true)}
+            className="select-item text-sm text-[#1A1A5D] font-nunito"
+          >
+            <SettingsIcon className="icon-md" aria-hidden="true" />
+            Manage Subscription
+          </Select.SelectItem>
+        )}
         <Select.SelectItem
           value=""
           onClick={() => setShowFiles(true)}
@@ -123,6 +161,18 @@ function AccountSettings() {
       </Select.SelectPopover>
       {showFiles && <FilesView open={showFiles} onOpenChange={setShowFiles} />}
       {showSettings && <Settings open={showSettings} onOpenChange={setShowSettings} />}
+      {showSubscriptionDialog && (
+        <SubscriptionDialog 
+          open={showSubscriptionDialog} 
+          onOpenChange={setShowSubscriptionDialog} 
+        />
+      )}
+      {showSubscriptionSettings && (
+        <SubscriptionSettings 
+          open={showSubscriptionSettings} 
+          onOpenChange={setShowSubscriptionSettings} 
+        />
+      )}
     </Select.SelectProvider>
   );
 }

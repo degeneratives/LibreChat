@@ -1,18 +1,11 @@
 import { useState } from 'react';
-import {
-  AuthType,
-  SearchCategories,
-  RerankerTypes,
-  SearchProviders,
-  ScraperTypes,
-} from 'librechat-data-provider';
+import { AuthType } from 'librechat-data-provider';
 import type { SearchApiKeyFormData } from '~/hooks/Plugins/useAuthSearchTool';
 import type { UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
-import InputSection, { type DropdownOption } from './InputSection';
 import OGDialogTemplate from '~/components/ui/OGDialogTemplate';
-import { Button, OGDialog } from '~/components/ui';
-import { useGetStartupConfig } from '~/data-provider';
+import { Input, Button, OGDialog, Dropdown } from '~/components/ui';
 import { useLocalize } from '~/hooks';
+import type { RefObject } from 'react';
 
 export default function ApiKeyDialog({
   isOpen,
@@ -34,123 +27,19 @@ export default function ApiKeyDialog({
   isToolAuthenticated: boolean;
   register: UseFormRegister<SearchApiKeyFormData>;
   handleSubmit: UseFormHandleSubmit<SearchApiKeyFormData>;
-  triggerRef?: React.RefObject<HTMLInputElement | HTMLButtonElement>;
-  triggerRefs?: React.RefObject<HTMLInputElement | HTMLButtonElement>[];
+  triggerRef?: RefObject<HTMLInputElement | HTMLButtonElement>;
+  triggerRefs?: RefObject<HTMLInputElement | HTMLButtonElement>[];
 }) {
   const localize = useLocalize();
-  const { data: config } = useGetStartupConfig();
+  const [selectedProvider, setSelectedProvider] = useState('serper');
 
-  const [selectedProvider, setSelectedProvider] = useState(
-    config?.webSearch?.searchProvider || SearchProviders.SERPER,
-  );
-  const [selectedReranker, setSelectedReranker] = useState(
-    config?.webSearch?.rerankerType || RerankerTypes.JINA,
-  );
-  const [selectedScraper, setSelectedScraper] = useState(ScraperTypes.FIRECRAWL);
-
-  const providerOptions: DropdownOption[] = [
-    {
-      key: SearchProviders.SERPER,
-      label: localize('com_ui_web_search_provider_serper'),
-      inputs: {
-        serperApiKey: {
-          placeholder: localize('com_ui_enter_api_key'),
-          type: 'password' as const,
-          link: {
-            url: 'https://serper.dev/api-keys',
-            text: localize('com_ui_web_search_provider_serper_key'),
-          },
-        },
-      },
-    },
-    {
-      key: SearchProviders.SEARXNG,
-      label: localize('com_ui_web_search_provider_searxng'),
-      inputs: {
-        searxngInstanceUrl: {
-          placeholder: localize('com_ui_web_search_searxng_instance_url'),
-          type: 'text' as const,
-        },
-        searxngApiKey: {
-          placeholder: localize('com_ui_web_search_searxng_api_key'),
-          type: 'password' as const,
-        },
-      },
-    },
+  const providers = [
+    { key: 'serper', label: 'Serper' },
+    { key: 'searxng', label: 'SearXNG' },
   ];
-
-  const rerankerOptions: DropdownOption[] = [
-    {
-      key: RerankerTypes.JINA,
-      label: localize('com_ui_web_search_reranker_jina'),
-      inputs: {
-        jinaApiKey: {
-          placeholder: localize('com_ui_web_search_jina_key'),
-          type: 'password' as const,
-          link: {
-            url: 'https://jina.ai/api-dashboard/',
-            text: localize('com_ui_web_search_reranker_jina_key'),
-          },
-        },
-      },
-    },
-    {
-      key: RerankerTypes.COHERE,
-      label: localize('com_ui_web_search_reranker_cohere'),
-      inputs: {
-        cohereApiKey: {
-          placeholder: localize('com_ui_web_search_cohere_key'),
-          type: 'password' as const,
-          link: {
-            url: 'https://dashboard.cohere.com/welcome/login',
-            text: localize('com_ui_web_search_reranker_cohere_key'),
-          },
-        },
-      },
-    },
-  ];
-
-  const scraperOptions: DropdownOption[] = [
-    {
-      key: ScraperTypes.FIRECRAWL,
-      label: localize('com_ui_web_search_scraper_firecrawl'),
-      inputs: {
-        firecrawlApiUrl: {
-          placeholder: localize('com_ui_web_search_firecrawl_url'),
-          type: 'text' as const,
-        },
-        firecrawlApiKey: {
-          placeholder: localize('com_ui_enter_api_key'),
-          type: 'password' as const,
-          link: {
-            url: 'https://docs.firecrawl.dev/introduction#api-key',
-            text: localize('com_ui_web_search_scraper_firecrawl_key'),
-          },
-        },
-      },
-    },
-  ];
-
-  const [dropdownOpen, setDropdownOpen] = useState({
-    provider: false,
-    reranker: false,
-    scraper: false,
-  });
-
-  const providerAuthType = authTypes.find(([cat]) => cat === SearchCategories.PROVIDERS)?.[1];
-  const scraperAuthType = authTypes.find(([cat]) => cat === SearchCategories.SCRAPERS)?.[1];
-  const rerankerAuthType = authTypes.find(([cat]) => cat === SearchCategories.RERANKERS)?.[1];
 
   const handleProviderChange = (key: string) => {
-    setSelectedProvider(key as SearchProviders);
-  };
-
-  const handleRerankerChange = (key: string) => {
-    setSelectedReranker(key as RerankerTypes);
-  };
-
-  const handleScraperChange = (key: string) => {
-    setSelectedScraper(key as ScraperTypes);
+    setSelectedProvider(key);
   };
 
   return (
@@ -165,74 +54,87 @@ export default function ApiKeyDialog({
         title=""
         main={
           <>
-            <div className="mb-4 text-center font-medium">{localize('com_ui_web_search')}</div>
+            <div className="mb-4 text-center font-medium">Web Search Tool</div>
+            <div className="mx-auto mb-4 flex max-w-[400px] flex-wrap justify-center gap-3">
+              <div className="h-6 w-6">
+                <svg viewBox="0 0 24 24" className="h-full w-full object-contain opacity-[0.85]">
+                  <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+              </div>
+            </div>
+            
             <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Provider Section */}
-              {providerAuthType !== AuthType.SYSTEM_DEFINED && (
-                <InputSection
-                  title={localize('com_ui_web_search_provider')}
-                  selectedKey={selectedProvider}
-                  onSelectionChange={handleProviderChange}
-                  dropdownOptions={providerOptions}
-                  showDropdown={!config?.webSearch?.searchProvider}
-                  register={register}
-                  dropdownOpen={dropdownOpen.provider}
-                  setDropdownOpen={(open) =>
-                    setDropdownOpen((prev) => ({ ...prev, provider: open }))
-                  }
-                  dropdownKey="provider"
+              <div className="mb-4">
+                <label className="mb-2 block text-sm font-medium">Search Provider</label>
+                <Dropdown
+                  value={selectedProvider}
+                  onChange={handleProviderChange}
+                  options={providers}
+                  className="w-full"
                 />
+              </div>
+
+              {selectedProvider === 'serper' && (
+                <div className="mb-4">
+                  <Input
+                    {...register('serperApiKey', { required: true })}
+                    type="password"
+                    placeholder="Serper API Key"
+                    className="w-full"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Get your API key from{' '}
+                    <a
+                      href="https://serper.dev"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
+                    >
+                      serper.dev
+                    </a>
+                  </p>
+                </div>
               )}
 
-              {/* Scraper Section */}
-              {scraperAuthType !== AuthType.SYSTEM_DEFINED && (
-                <InputSection
-                  title={localize('com_ui_web_search_scraper')}
-                  selectedKey={selectedScraper}
-                  onSelectionChange={handleScraperChange}
-                  dropdownOptions={scraperOptions}
-                  showDropdown={!config?.webSearch?.scraperType}
-                  register={register}
-                  dropdownOpen={dropdownOpen.scraper}
-                  setDropdownOpen={(open) =>
-                    setDropdownOpen((prev) => ({ ...prev, scraper: open }))
-                  }
-                  dropdownKey="scraper"
-                />
+              {selectedProvider === 'searxng' && (
+                <>
+                  <div className="mb-4">
+                    <Input
+                      {...register('searxngInstanceUrl', { required: true })}
+                      type="text"
+                      placeholder="SearXNG Instance URL"
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <Input
+                      {...register('searxngApiKey')}
+                      type="password"
+                      placeholder="SearXNG API Key (optional)"
+                      className="w-full"
+                    />
+                  </div>
+                </>
               )}
 
-              {/* Reranker Section */}
-              {rerankerAuthType !== AuthType.SYSTEM_DEFINED && (
-                <InputSection
-                  title={localize('com_ui_web_search_reranker')}
-                  selectedKey={selectedReranker}
-                  onSelectionChange={handleRerankerChange}
-                  dropdownOptions={rerankerOptions}
-                  showDropdown={!config?.webSearch?.rerankerType}
-                  register={register}
-                  dropdownOpen={dropdownOpen.reranker}
-                  setDropdownOpen={(open) =>
-                    setDropdownOpen((prev) => ({ ...prev, reranker: open }))
-                  }
-                  dropdownKey="reranker"
-                />
-              )}
+              <div className="mt-4 flex justify-between">
+                {isToolAuthenticated && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onRevoke}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    {localize('com_ui_revoke')}
+                  </Button>
+                )}
+                <Button type="submit" className="ml-auto">
+                  {localize('com_ui_submit')}
+                </Button>
+              </div>
             </form>
           </>
         }
-        selection={{
-          selectHandler: handleSubmit(onSubmit),
-          selectClasses: 'bg-green-500 hover:bg-green-600 text-white',
-          selectText: localize('com_ui_save'),
-        }}
-        buttons={
-          isToolAuthenticated && (
-            <Button onClick={onRevoke} className="bg-red-500 text-white hover:bg-red-600">
-              {localize('com_ui_revoke')}
-            </Button>
-          )
-        }
-        showCancelButton={true}
       />
     </OGDialog>
   );

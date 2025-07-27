@@ -1,5 +1,6 @@
 const assistants = require('./assistants');
 const categories = require('./categories');
+const subscription = require('./subscription');
 const tokenizer = require('./tokenizer');
 const endpoints = require('./endpoints');
 const staticRoute = require('./static');
@@ -54,6 +55,7 @@ module.exports = {
   tokenizer,
   assistants,
   categories,
+  subscription,
   staticRoute,
   mcp,
 };

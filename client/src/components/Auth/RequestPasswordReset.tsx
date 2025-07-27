@@ -25,7 +25,7 @@ const ResetPasswordBodyText = () => {
     <div className="flex flex-col space-y-4">
       <p>{localize('com_auth_reset_password_if_email_exists')}</p>
       <a
-        className="inline-flex text-sm font-medium text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+        className="inline-flex text-sm font-medium text-brand-green-600 transition-colors hover:text-brand-green-700 dark:text-brand-green-400 dark:hover:text-brand-green-300"
         href="/login"
       >
         {localize('com_auth_back_to_login')}

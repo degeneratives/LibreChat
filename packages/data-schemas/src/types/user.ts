@@ -33,6 +33,12 @@ export interface IUser extends Document {
   personalization?: {
     memories?: boolean;
   };
+  subscription?: {
+    isActive?: boolean;
+    type?: 'daily' | 'weekly';
+    endDate?: Date;
+    lastPayment?: Date;
+  };
   createdAt?: Date;
   updatedAt?: Date;
 }

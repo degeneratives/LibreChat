@@ -19,27 +19,36 @@ export default function ApiKeyDialog({
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { apiKey: string }) => void;
+  onSubmit: (data: ApiKeyFormData) => void;
   onRevoke: () => void;
-  isUserProvided: boolean;
+  isUserProvided?: boolean;
   isToolAuthenticated: boolean;
   register: UseFormRegister<ApiKeyFormData>;
   handleSubmit: UseFormHandleSubmit<ApiKeyFormData>;
-  triggerRef?: RefObject<HTMLInputElement | HTMLButtonElement>;
-  triggerRefs?: RefObject<HTMLInputElement | HTMLButtonElement>[];
+  triggerRef?: RefObject<HTMLButtonElement>;
+  triggerRefs?: RefObject<HTMLButtonElement>[];
 }) {
   const localize = useLocalize();
+
   const languageIcons = [
     'python.svg',
-    'nodedotjs.svg',
-    'tsnode.svg',
-    'rust.svg',
-    'go.svg',
-    'c.svg',
-    'cplusplus.svg',
+    'javascript.svg',
+    'typescript.svg',
+    'java.svg',
+    'cpp.svg',
+    'csharp.svg',
     'php.svg',
-    'fortran.svg',
+    'ruby.svg',
+    'go.svg',
+    'rust.svg',
+    'swift.svg',
+    'kotlin.svg',
+    'scala.svg',
     'r.svg',
+    'matlab.svg',
+    'perl.svg',
+    'lua.svg',
+    'bash.svg',
   ];
 
   return (
@@ -50,67 +59,57 @@ export default function ApiKeyDialog({
       triggerRefs={triggerRefs}
     >
       <OGDialogTemplate
-        className="w-11/12 sm:w-[450px]"
+        className="w-11/12 sm:w-[500px]"
         title=""
         main={
           <>
-            <div className="mb-4 text-center font-medium">
-              {localize('com_ui_librechat_code_api_title')}
+            <div className="mb-4 text-center font-medium">{localize('com_nav_tool_code')}</div>
+            <div className="mx-auto mb-4 flex max-w-[400px] flex-wrap justify-center gap-3">
+              {languageIcons.map((icon) => (
+                <div key={icon} className="h-6 w-6">
+                  <img
+                    src={`/assets/${icon}`}
+                    alt=""
+                    className="h-full w-full object-contain opacity-[0.85] dark:invert"
+                  />
+                </div>
+              ))}
             </div>
-            <div className="mb-4 text-center text-sm">
-              {localize('com_ui_librechat_code_api_subtitle')}
-            </div>
-            {/* Language Icons Stack */}
-            <div className="mb-6">
-              <div className="mx-auto mb-4 flex max-w-[400px] flex-wrap justify-center gap-3">
-                {languageIcons.map((icon) => (
-                  <div key={icon} className="h-6 w-6">
-                    <img
-                      src={`/assets/${icon}`}
-                      alt=""
-                      className="h-full w-full object-contain opacity-[0.85] dark:invert"
-                    />
-                  </div>
-                ))}
-              </div>
-              <a
-                href="https://code.librechat.ai/pricing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-center text-[15px] font-medium text-blue-500 underline decoration-1 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                {localize('com_ui_librechat_code_api_key')}
-              </a>
-            </div>
+            <a
+              href="https://code.librechat.ai/pricing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-center text-[15px] font-medium text-blue-500 underline decoration-1 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              {localize('com_nav_get_api_key')}
+            </a>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Input
-                type="password"
-                placeholder={localize('com_ui_enter_api_key')}
-                autoComplete="one-time-code"
-                readOnly={true}
-                onFocus={(e) => (e.target.readOnly = false)}
-                {...register('apiKey', { required: true })}
-              />
+              <div className="mt-4">
+                <Input
+                  {...register('apiKey', { required: true })}
+                  type="password"
+                  placeholder={localize('com_ui_api_key')}
+                  className="w-full"
+                />
+              </div>
+              <div className="mt-4 flex justify-between">
+                {isToolAuthenticated && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onRevoke}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    {localize('com_ui_revoke')}
+                  </Button>
+                )}
+                <Button type="submit" className="ml-auto">
+                  {localize('com_ui_submit')}
+                </Button>
+              </div>
             </form>
           </>
         }
-        selection={{
-          selectHandler: handleSubmit(onSubmit),
-          selectClasses: 'bg-green-500 hover:bg-green-600 text-white',
-          selectText: localize('com_ui_save'),
-        }}
-        buttons={
-          isUserProvided &&
-          isToolAuthenticated && (
-            <Button
-              onClick={onRevoke}
-              className="bg-destructive text-white transition-all duration-200 hover:bg-destructive/80"
-            >
-              {localize('com_ui_revoke')}
-            </Button>
-          )
-        }
-        showCancelButton={true}
       />
     </OGDialog>
   );

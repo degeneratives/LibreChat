@@ -1,11 +1,16 @@
-import { useEffect } from 'react';
-import { AgentPanelProvider, useAgentPanelContext } from '~/Providers/AgentPanelContext';
-import VersionPanel from './Version/VersionPanel';
-import { useChatContext } from '~/Providers';
-import ActionsPanel from './ActionsPanel';
-import AgentPanel from './AgentPanel';
-import MCPPanel from './MCPPanel';
-import { Panel } from '~/common';
+import React from 'react';
+import { useAgentPanelContext, AgentPanelProvider } from '~/Providers';
+
+function AgentPanelSwitchWithContext() {
+  const { activePanel, setActivePanel } = useAgentPanelContext();
+  
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-medium mb-2">Agent Panel</h3>
+      <p className="text-sm text-gray-600">Agent panel functionality coming soon...</p>
+    </div>
+  );
+}
 
 export default function AgentPanelSwitch() {
   return (
@@ -13,31 +18,4 @@ export default function AgentPanelSwitch() {
       <AgentPanelSwitchWithContext />
     </AgentPanelProvider>
   );
-}
-
-function AgentPanelSwitchWithContext() {
-  const { conversation } = useChatContext();
-  const { activePanel, setCurrentAgentId } = useAgentPanelContext();
-
-  useEffect(() => {
-    const agent_id = conversation?.agent_id ?? '';
-    if (agent_id) {
-      setCurrentAgentId(agent_id);
-    }
-  }, [setCurrentAgentId, conversation?.agent_id]);
-
-  if (!conversation?.endpoint) {
-    return null;
-  }
-
-  if (activePanel === Panel.actions) {
-    return <ActionsPanel />;
-  }
-  if (activePanel === Panel.version) {
-    return <VersionPanel />;
-  }
-  if (activePanel === Panel.mcp) {
-    return <MCPPanel />;
-  }
-  return <AgentPanel />;
 }

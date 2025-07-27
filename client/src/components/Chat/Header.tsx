@@ -47,7 +47,15 @@ export default function Header() {
             }`}
           >
             <OpenSidebar setNavVisible={setNavVisible} />
-            <HeaderNewChat />
+            <div className="flex items-center gap-2">
+              <img
+                src="/assets/logo.svg"
+                alt="Logo"
+                className="h-8 w-8 object-contain border-2 border-red-500 bg-yellow-200"
+                style={{ minWidth: '32px', minHeight: '32px' }}
+              />
+              <HeaderNewChat />
+            </div>
           </div>
           <div
             className={`flex items-center gap-2 ${

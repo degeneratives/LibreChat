@@ -247,7 +247,7 @@ export default function AgentConfig({ createMutation }: Pick<AgentPanelProps, 'c
         {/* Model and Provider */}
         <div className="mb-4">
           <label className={labelClass} htmlFor="provider">
-            {localize('com_ui_model')} <span className="text-red-500">*</span>
+            {localize('com_ui_model')}
           </label>
           <button
             type="button"

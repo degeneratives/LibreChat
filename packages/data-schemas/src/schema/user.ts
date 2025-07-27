@@ -138,6 +138,25 @@ const userSchema = new Schema<IUser>(
       },
       default: {},
     },
+    subscription: {
+      type: {
+        isActive: {
+          type: Boolean,
+          default: false,
+        },
+        type: {
+          type: String,
+          enum: ['daily', 'weekly'],
+        },
+        endDate: {
+          type: Date,
+        },
+        lastPayment: {
+          type: Date,
+        },
+      },
+      default: {},
+    },
   },
   { timestamps: true },
 );

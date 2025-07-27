@@ -119,7 +119,7 @@ export default function ModelPanel({
             className="text-token-text-primary model-panel-label mb-2 block font-medium"
             htmlFor="provider"
           >
-            {localize('com_ui_provider')} <span className="text-red-500">*</span>
+            {localize('com_ui_provider')}
           </label>
           <Controller
             name="provider"
@@ -172,7 +172,7 @@ export default function ModelPanel({
             )}
             htmlFor="model"
           >
-            {localize('com_ui_model')} <span className="text-red-500">*</span>
+            {localize('com_ui_model')}
           </label>
           <Controller
             name="model"
